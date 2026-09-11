@@ -5,19 +5,16 @@ import { X } from 'lucide-react'
 import type { Session } from '@/lib/auth'
 import { getUsers, type UserSummary } from '@/lib/api'
 
-// Same search-as-you-type pattern as the distributor picker in
-// NewPickupModal, but filtered client-side from the full sales-associate
-// list rather than a dedicated search endpoint — see note in the
-// conversation this was built from if that ever needs to change to a
-// server-side search as the associate list grows.
 export function AssociatePicker({
   session,
   value,
   onChange,
+  onSelectDetails,
 }: {
   session: Session
-  value: string // assigned_sales_associate_id — empty string means unassigned
+  value: string
   onChange: (associateId: string) => void
+  onSelectDetails?: (associate: UserSummary) => void
 }) {
   const [associates, setAssociates] = useState<UserSummary[]>([])
   const [loading, setLoading] = useState(true)
@@ -44,6 +41,7 @@ export function AssociatePicker({
 
   function select(associate: UserSummary) {
     onChange(associate.user_id)
+    onSelectDetails?.(associate)
     setQuery('')
   }
 

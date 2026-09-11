@@ -1,7 +1,7 @@
 'use client'
 
 import {
-  LayoutDashboard, PackageCheck, Boxes, ReceiptText, UsersRound, Store, Map,
+  LayoutDashboard, PackageCheck, Boxes, ReceiptText, UsersRound, Store, Map, KeyRound, BarChart3,
   ChevronDown, Settings2, CircleHelp, X, type LucideIcon,
   Truck,
 } from 'lucide-react'
@@ -9,7 +9,7 @@ import { roles, type IconName } from '@/lib/mock-data'
 import type { Session } from '@/lib/auth'
 
 const iconMap: Record<IconName, LucideIcon> = {
-  LayoutDashboard, Map, Truck, PackageCheck, Boxes, ReceiptText, UsersRound, Store
+  LayoutDashboard, Map, Truck, PackageCheck, Boxes, ReceiptText, UsersRound, Store, KeyRound, BarChart3,
 }
 
 export function Sidebar({

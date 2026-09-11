@@ -10,9 +10,10 @@ export const navigation = [
   { label: 'Outlets', icon: 'Store' },
   { label: 'Routes', icon: 'Map' },
   { label: 'Assignments', icon: 'Truck' },
+  { label: 'PINs', icon: 'KeyRound' },
+  { label: 'Reports', icon: 'BarChart3' },
   { label: 'Pickups', icon: 'PackageCheck' },
   { label: 'Inventory', icon: 'Boxes' },
-  { label: 'Invoices', icon: 'ReceiptText' },
   { label: 'People & roles', icon: 'UsersRound' },
 ]
 
@@ -59,6 +60,6 @@ export const mockApi = {
     return Promise.resolve({} as T)
   },
 }
-const iconNames = ['LayoutDashboard', 'PackageCheck', 'Boxes', 'ReceiptText', 'UsersRound', 'Store', 'Map', 'Truck'] as const
+const iconNames = ['LayoutDashboard', 'PackageCheck', 'Boxes', 'ReceiptText', 'UsersRound', 'Store', 'Map', 'Truck', 'KeyRound', 'BarChart3'] as const
 export type IconName = typeof iconNames[number]
 export const isIconName = (value: string): value is IconName => iconNames.includes(value as IconName)
