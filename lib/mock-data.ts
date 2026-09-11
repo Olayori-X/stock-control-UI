@@ -8,6 +8,8 @@ export const roles: Record<Role, { label: string; shortLabel: string }> = {
 
 export const navigation = [
   { label: 'Outlets', icon: 'Store' },
+  { label: 'Routes', icon: 'Map' },
+  { label: 'Assignments', icon: 'Truck' },
   { label: 'Pickups', icon: 'PackageCheck' },
   { label: 'Inventory', icon: 'Boxes' },
   { label: 'Invoices', icon: 'ReceiptText' },
@@ -57,6 +59,6 @@ export const mockApi = {
     return Promise.resolve({} as T)
   },
 }
-const iconNames = ['LayoutDashboard', 'PackageCheck', 'Boxes', 'ReceiptText', 'UsersRound', 'Store'] as const
+const iconNames = ['LayoutDashboard', 'PackageCheck', 'Boxes', 'ReceiptText', 'UsersRound', 'Store', 'Map', 'Truck'] as const
 export type IconName = typeof iconNames[number]
 export const isIconName = (value: string): value is IconName => iconNames.includes(value as IconName)

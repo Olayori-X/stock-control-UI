@@ -18,12 +18,14 @@ import { NewPickupModal } from '@/components/pickups/NewPickupModal'
 import { InventoryTab } from '@/components/inventory/InventoryTab'
 import { PeopleTab } from '@/components/people/PeopleTab'
 import { OutletsTab } from '@/components/outlets/OutletsTab'
+import { RoutePlannerTab } from '@/components/routes/RoutePlannerTab'
+import { AssignmentsTab } from '@/components/assignments/AssignmentsTab'
 
 // Which sidebar sections each role can see. Distributor never reaches this —
 // they get a dedicated single-purpose view (DistributorPortal), no sidebar
 // at all. Admins do not create pickups, so 'Pickups' is sales-only.
 const navByRole: Record<Role, string[]> = {
-  admin: ['Outlets', 'Inventory', 'People & roles'],
+  admin: ['Outlets', 'Routes', 'Assignments', 'Inventory', 'People & roles'],
   sales: ['Pickups', 'Inventory'],
   distributor: [],
 }
@@ -132,6 +134,10 @@ export default function Page() {
         )}
 
         {currentNav === 'Inventory' && <InventoryTab session={session} role={role} />}
+
+        {currentNav === 'Routes' && role === 'admin' && <RoutePlannerTab session={session} />}
+
+        {currentNav === 'Assignments' && role === 'admin' && <AssignmentsTab session={session} />}
 
         {currentNav === 'People & roles' && role === 'admin' && <PeopleTab session={session} />}
       </section>

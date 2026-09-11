@@ -1,11 +1,15 @@
 'use client'
 
 import { AlertTriangle, X } from 'lucide-react'
+import type { Session } from '@/lib/auth'
 import type { OutletInput } from '@/lib/api'
+import { AssociatePicker } from '../shared/AssociatePicker'
+import { ROUTE_DAYS } from '@/lib/constants'
 
-const routeDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+
 
 export function OutletFormModal({
+  session,
   title,
   form,
   saving,
@@ -14,6 +18,7 @@ export function OutletFormModal({
   onSubmit,
   onClose,
 }: {
+  session: Session
   title: string
   form: OutletInput
   saving: boolean
@@ -40,12 +45,20 @@ export function OutletFormModal({
           <label>Zone<input value={form.zone} onChange={(e) => onChange('zone', e.target.value)} /></label>
           <label>Route day
             <select value={form.route_day} onChange={(e) => onChange('route_day', e.target.value)}>
-              <option value="">Unassigned</option>
-              {routeDays.map((d) => <option key={d} value={d}>{d}</option>)}
+                <option value="">Unassigned</option>
+                {ROUTE_DAYS.map((d) => <option key={d} value={d}>{d}</option>)}
             </select>
           </label>
           <label>Priority<input value={form.priority} onChange={(e) => onChange('priority', e.target.value)} placeholder="e.g. High" /></label>
-          <label>Assigned associate ID<input value={form.assigned_sales_associate_id} onChange={(e) => onChange('assigned_sales_associate_id', e.target.value)} placeholder="Sales associate user ID" /></label>
+
+          <div style={{ gridColumn: 'span 2' }}>
+            <label style={{ display: 'block', marginBottom: 4 }}>Assigned sales associate</label>
+            <AssociatePicker
+              session={session}
+              value={form.assigned_sales_associate_id}
+              onChange={(id) => onChange('assigned_sales_associate_id', id)}
+            />
+          </div>
 
           {error && <div className="empty-state"><AlertTriangle size={18} /><p>{error}</p></div>}
 

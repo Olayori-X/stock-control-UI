@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { AlertTriangle, Check, Pencil, Plus, Search, Store, Trash2 } from 'lucide-react'
+import { AlertTriangle, Check, Pencil, Plus, Power, PowerOff, Search, Store } from 'lucide-react'
 import type { Session } from '@/lib/auth'
 import { addOutlet, editOutlet, getOutlets, setOutletActive, type Outlet, type OutletInput } from '@/lib/api'
 import { OutletFormModal } from './OutletFormModal'
@@ -158,14 +158,17 @@ export function OutletsTab({ session }: { session: Session }) {
                     <td className="muted-cell">{outlet.route_day || 'Unassigned'}</td>
                     <td>{outlet.active ? <span className="status status-success"><span className="status-dot" />Active</span> : <span className="status status-danger"><span className="status-dot" />Inactive</span>}</td>
                     <td>
-                      <button className="icon-button" onClick={() => openEdit(outlet)} aria-label={`Edit ${outlet.name}`}><Pencil size={15} /></button>
+                      <button className="icon-button" onClick={() => openEdit(outlet)} aria-label={`Edit ${outlet.name}`} title="Edit outlet">
+                        <Pencil size={15} />
+                      </button>
                       <button
                         className="icon-button"
                         onClick={() => handleToggleActive(outlet)}
                         disabled={togglingId === outlet.outlet_id}
                         aria-label={outlet.active ? `Deactivate ${outlet.name}` : `Reactivate ${outlet.name}`}
+                        title={outlet.active ? 'Deactivate outlet' : 'Reactivate outlet'}
                       >
-                        <Trash2 size={15} />
+                        {outlet.active ? <PowerOff size={15} /> : <Power size={15} />}
                       </button>
                     </td>
                   </tr>
@@ -178,6 +181,7 @@ export function OutletsTab({ session }: { session: Session }) {
 
       {showAdd && (
         <OutletFormModal
+          session={session}
           title="Add an outlet"
           form={addForm}
           saving={saving}
@@ -190,6 +194,7 @@ export function OutletsTab({ session }: { session: Session }) {
 
       {editingOutlet && (
         <OutletFormModal
+          session={session}
           title={`Edit ${editingOutlet.name}`}
           form={editForm}
           saving={saving}
