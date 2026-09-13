@@ -30,6 +30,7 @@ const navByRole: Record<Role, string[]> = {
   admin: ['Outlets', 'Routes', 'Assignments', 'PINs', 'Reports', 'Inventory', 'People & roles'],
   sales: ['Pickups', 'Inventory'],
   distributor: [],
+  supervisor: ['Outlets', 'Reports'],
 }
 
 export default function Page() {
@@ -96,6 +97,7 @@ export default function Page() {
   if (role === 'distributor') {
     return (
       <DistributorPortal
+        session={session}
         loading={loadingPickups}
         error={pickupError}
         requests={pickupRequests}
@@ -123,7 +125,7 @@ export default function Page() {
       <section className="main-panel">
         <Topbar session={session} currentNav={currentNav} onOpenMobileNav={() => setMobileOpen(true)} onLogout={handleLogout} />
 
-        {currentNav === 'Outlets' && role === 'admin' && <OutletsTab session={session} />}
+        {currentNav === 'Outlets' && role === 'admin' && <OutletsTab session={session} role={role} />}
 
         {currentNav === 'Pickups' && role === 'sales' && (
           <PickupsTab
@@ -140,6 +142,10 @@ export default function Page() {
         {currentNav === 'Routes' && role === 'admin' && <RoutePlannerTab session={session} />}
 
         {currentNav === 'Assignments' && role === 'admin' && <AssignmentsTab session={session} />}
+
+        {currentNav === 'Outlets' && (role === 'admin' || role === 'supervisor') && <OutletsTab session={session} role={role} />}
+
+        {currentNav === 'Reports' && (role === 'admin' || role === 'supervisor') && <ReportsTab session={session} />}
 
         {currentNav === 'PINs' && role === 'admin' && <PinManagementTab session={session} />}
 

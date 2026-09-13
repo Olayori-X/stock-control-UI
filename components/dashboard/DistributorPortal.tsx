@@ -1,10 +1,15 @@
 'use client'
 
+import { useState } from 'react'
 import { AlertTriangle, Boxes, Check, LogOut, PackageCheck } from 'lucide-react'
+import type { Session } from '@/lib/auth'
 import { Status } from './Status'
+import { InvoicesSection } from './InvoicesSection'
+import { ReceiptsSection } from './ReceiptsSection'
 import type { PickupRequest } from '@/lib/api'
 
 export function DistributorPortal({
+  session,
   loading,
   error,
   requests,
@@ -12,6 +17,7 @@ export function DistributorPortal({
   onConfirm,
   onLogout,
 }: {
+  session: Session
   loading: boolean
   error: string | null
   requests: PickupRequest[]
@@ -20,6 +26,10 @@ export function DistributorPortal({
   onLogout: () => void
 }) {
   const pending = requests.filter((r) => !r.confirmed)
+
+  // Bumping this key remounts ReceiptsSection, forcing a fresh fetch —
+  // simpler than threading a manual refetch function down through props.
+  const [receiptsRefreshKey, setReceiptsRefreshKey] = useState(0)
 
   return (
     <main className="app-shell">
@@ -70,6 +80,9 @@ export function DistributorPortal({
               </div>
             )}
           </section>
+
+          <InvoicesSection session={session} onPaymentRecorded={() => setReceiptsRefreshKey((k) => k + 1)} />
+          <ReceiptsSection key={receiptsRefreshKey} session={session} />
         </div>
       </section>
     </main>

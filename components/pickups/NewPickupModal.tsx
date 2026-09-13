@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react'
 import { AlertTriangle, Check, X } from 'lucide-react'
 import type { Session } from '@/lib/auth'
-import { createPickupRequest, getProducts, searchDistributors, type DistributorSearchResult, type PickupRequest, type Product } from '@/lib/api'
+import { createPickupRequest, getProducts, type DistributorSearchResult, type PickupRequest, type Product } from '@/lib/api'
+import { DistributorPicker } from '@/components/shared/DistributorPicker'
 
 export function NewPickupModal({
   session,
@@ -14,9 +15,6 @@ export function NewPickupModal({
   onClose: () => void
   onCreated: (req: PickupRequest) => void
 }) {
-  const [distributorQuery, setDistributorQuery] = useState('')
-  const [distributorResults, setDistributorResults] = useState<DistributorSearchResult[]>([])
-  const [searchingDistributors, setSearchingDistributors] = useState(false)
   const [selectedDistributor, setSelectedDistributor] = useState<DistributorSearchResult | null>(null)
 
   const [products, setProducts] = useState<Product[]>([])
@@ -27,6 +25,7 @@ export function NewPickupModal({
   const [submitting, setSubmitting] = useState(false)
   const [formError, setFormError] = useState<string | null>(null)
 
+  // Load the product catalog once, on open.
   useEffect(() => {
     let cancelled = false
     setLoadingProducts(true)
@@ -36,34 +35,6 @@ export function NewPickupModal({
       .finally(() => { if (!cancelled) setLoadingProducts(false) })
     return () => { cancelled = true }
   }, [session])
-
-  useEffect(() => {
-    if (selectedDistributor) return
-    if (distributorQuery.trim().length === 0) {
-      setDistributorResults([])
-      return
-    }
-    let cancelled = false
-    setSearchingDistributors(true)
-    const timeout = setTimeout(() => {
-      searchDistributors(session, distributorQuery)
-        .then((results) => { if (!cancelled) setDistributorResults(results) })
-        .catch(() => { if (!cancelled) setDistributorResults([]) })
-        .finally(() => { if (!cancelled) setSearchingDistributors(false) })
-    }, 300)
-    return () => { cancelled = true; clearTimeout(timeout) }
-  }, [distributorQuery, selectedDistributor, session])
-
-  function selectDistributor(d: DistributorSearchResult) {
-    setSelectedDistributor(d)
-    setDistributorQuery(d.name)
-    setDistributorResults([])
-  }
-
-  function clearDistributor() {
-    setSelectedDistributor(null)
-    setDistributorQuery('')
-  }
 
   function setQuantity(sku: string, value: number) {
     setQuantities((prev) => ({ ...prev, [sku]: Math.max(0, value) }))
@@ -108,39 +79,14 @@ export function NewPickupModal({
 
         <div className="form-grid">
           <div>
-            <label htmlFor="distributor-search" style={{ display: 'block', marginBottom: 4 }}>Distributor</label>
+            <label style={{ display: 'block', marginBottom: 4 }}>Distributor</label>
             {selectedDistributor ? (
               <div className="table-search">
                 <span style={{ flex: 1 }}>{selectedDistributor.name} — {selectedDistributor.email}</span>
-                <button type="button" className="icon-button" onClick={clearDistributor} aria-label="Change distributor"><X size={14} /></button>
+                <button type="button" className="icon-button" onClick={() => setSelectedDistributor(null)} aria-label="Change distributor"><X size={14} /></button>
               </div>
             ) : (
-              <div style={{ position: 'relative' }}>
-                <input
-                  id="distributor-search"
-                  value={distributorQuery}
-                  onChange={(e) => setDistributorQuery(e.target.value)}
-                  placeholder="Search by name or email..."
-                  autoComplete="off"
-                />
-                {searchingDistributors && <p className="muted-cell">Searching…</p>}
-                {!searchingDistributors && distributorResults.length > 0 && (
-                  <div className="table-wrap" style={{ marginTop: 6 }}>
-                    <table>
-                      <tbody>
-                        {distributorResults.map((d) => (
-                          <tr key={d.user_id} onClick={() => selectDistributor(d)} style={{ cursor: 'pointer' }}>
-                            <td><strong>{d.name}</strong><span>{d.email}</span></td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-                {!searchingDistributors && distributorQuery.trim().length > 0 && distributorResults.length === 0 && (
-                  <p className="muted-cell">No distributors found.</p>
-                )}
-              </div>
+              <DistributorPicker session={session} onSelect={setSelectedDistributor} />
             )}
           </div>
 

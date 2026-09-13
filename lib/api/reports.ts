@@ -1,6 +1,22 @@
 import { authFetch, type Session } from '../auth'
 import { unwrap } from './client'
 
+// Resolves which route prefix to call — supervisors have their own
+// mirrored read-only routes for everything except the audit log, which
+// stays admin-only (see getAuditLog below, deliberately not using this).
+function reportBase(session: Session): string {
+  return session.role === 'supervisor' ? '/supervisor' : '/admin'
+}
+
+function buildQuery(params: Record<string, string | undefined>): string {
+  const search = new URLSearchParams()
+  for (const [key, value] of Object.entries(params)) {
+    if (value) search.set(key, value)
+  }
+  const qs = search.toString()
+  return qs ? `?${qs}` : ''
+}
+
 // ── Sales ────────────────────────────────────────────────────────────────
 export interface Sale {
   transaction_id: string
@@ -35,15 +51,6 @@ export interface SalesFilters {
   to?: string   // YYYY-MM-DD
 }
 
-function buildQuery(params: Record<string, string | undefined>): string {
-  const search = new URLSearchParams()
-  for (const [key, value] of Object.entries(params)) {
-    if (value) search.set(key, value)
-  }
-  const qs = search.toString()
-  return qs ? `?${qs}` : ''
-}
-
 export async function getSales(session: Session, filters: SalesFilters = {}): Promise<SalesReportResult> {
   const qs = buildQuery({
     sales_associate_id: filters.salesAssociateId,
@@ -52,7 +59,7 @@ export async function getSales(session: Session, filters: SalesFilters = {}): Pr
     from: filters.from,
     to: filters.to,
   })
-  const res = await authFetch(`/admin/sales${qs}`, session)
+  const res = await authFetch(`${reportBase(session)}/sales${qs}`, session)
   return unwrap<SalesReportResult>(res)
 }
 
@@ -79,7 +86,7 @@ export async function getResumptionLogs(
     from: filters.from,
     to: filters.to,
   })
-  const res = await authFetch(`/admin/resumptionlogs${qs}`, session)
+  const res = await authFetch(`${reportBase(session)}/resumptionlogs${qs}`, session)
   const data = await unwrap<ResumptionLog[]>(res)
   return data ?? []
 }
@@ -106,7 +113,7 @@ export async function getOutletVisits(
     from: filters.from,
     to: filters.to,
   })
-  const res = await authFetch(`/admin/outletvisits${qs}`, session)
+  const res = await authFetch(`${reportBase(session)}/outletvisits${qs}`, session)
   const data = await unwrap<OutletVisit[]>(res)
   return data ?? []
 }
@@ -131,7 +138,7 @@ export interface PlannedVsActual {
 
 export async function getPlannedVsActual(session: Session, salesAssociateId: string, date?: string): Promise<PlannedVsActual> {
   const qs = buildQuery({ sales_associate_id: salesAssociateId, date })
-  const res = await authFetch(`/admin/plannedvsactual${qs}`, session)
+  const res = await authFetch(`${reportBase(session)}/plannedvsactual${qs}`, session)
   return unwrap<PlannedVsActual>(res)
 }
 
@@ -156,7 +163,7 @@ export interface RouteEfficiency {
 
 export async function getRouteEfficiency(session: Session, salesAssociateId: string, routeDay: string): Promise<RouteEfficiency> {
   const qs = buildQuery({ sales_associate_id: salesAssociateId, route_day: routeDay })
-  const res = await authFetch(`/admin/routeefficiency${qs}`, session)
+  const res = await authFetch(`${reportBase(session)}/routeefficiency${qs}`, session)
   return unwrap<RouteEfficiency>(res)
 }
 
@@ -174,11 +181,14 @@ export interface OutsideCoverageReport {
 
 export async function getOutsideCoverage(session: Session, salesAssociateId: string, weekStart?: string): Promise<OutsideCoverageReport> {
   const qs = buildQuery({ sales_associate_id: salesAssociateId, week_start: weekStart })
-  const res = await authFetch(`/admin/outsidecoverage${qs}`, session)
+  const res = await authFetch(`${reportBase(session)}/outsidecoverage${qs}`, session)
   return unwrap<OutsideCoverageReport>(res)
 }
 
 // ── Audit log ────────────────────────────────────────────────────────────
+// Deliberately NOT using reportBase — the audit log is admin-only (no
+// /supervisor/auditlog route exists on the backend), matching the brief's
+// role split where "audit" sits under Administrator, not Supervisor/Manager.
 export interface AuditLogEntry {
   actor_id: string | null
   action: string
@@ -196,5 +206,3 @@ export async function getAuditLog(
   const data = await unwrap<AuditLogEntry[]>(res)
   return data ?? []
 }
-
-
