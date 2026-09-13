@@ -8,8 +8,13 @@ import { ResumptionReport } from './ResumptionReport'
 import { OutletVisitsReport } from './OutletVisitsReport'
 import { PlannedVsActualReport } from './PlannedVsActualReport'
 import { RouteEfficiencyReport } from './RouteEfficiencyReport'
+import { OutsideCoverageReport } from './OutsideCoverageReport'
+import { AuditLogReport } from './AuditLogReport'
 
-const subViews = ['Sales', 'Resumption', 'Outlet visits', 'Planned vs actual', 'Route efficiency'] as const // remaining: 'Outside coverage', 'Audit log'
+const subViews = [
+  'Sales', 'Resumption', 'Outlet visits', 'Planned vs actual',
+  'Route efficiency', 'Outside coverage', 'Audit log',
+] as const
 type SubView = typeof subViews[number]
 
 export function ReportsTab({ session }: { session: Session }) {
@@ -25,7 +30,7 @@ export function ReportsTab({ session }: { session: Session }) {
         </div>
       </div>
 
-      <div className="filter-row" style={{ marginBottom: 20 }}>
+      <div className="filter-row" style={{ marginBottom: 20, flexWrap: 'wrap' }}>
         {subViews.map((view) => (
           <button
             key={view}
@@ -42,6 +47,8 @@ export function ReportsTab({ session }: { session: Session }) {
       {subView === 'Outlet visits' && <OutletVisitsReport session={session} />}
       {subView === 'Planned vs actual' && <PlannedVsActualReport session={session} />}
       {subView === 'Route efficiency' && <RouteEfficiencyReport session={session} />}
+      {subView === 'Outside coverage' && <OutsideCoverageReport session={session} />}
+      {subView === 'Audit log' && <AuditLogReport session={session} />}
     </div>
   )
 }

@@ -22,7 +22,7 @@ export class AuthError extends Error {}
 const SESSION_KEY = 'stockwise_session'
 
 const isRole = (value: string): value is Role =>
-  value === 'admin' || value === 'sales' || value === 'distributor'
+  value === 'admin' || value === 'sales' || value === 'distributor' || value === 'supervisor'
 
 // ── Login ──────────────────────────────────────────────────────────────────
 // Hits POST /auth/login on the Go backend. That handler has no method guard

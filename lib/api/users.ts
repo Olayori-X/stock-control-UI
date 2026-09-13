@@ -1,7 +1,7 @@
 import { authFetch, type Session } from '../auth'
 import { unwrap } from './client'
 
-export type Role = 'admin' | 'sales' | 'distributor'
+export type Role = 'admin' | 'sales' | 'distributor' | 'supervisor'
 
 export interface AddUserInput {
   name: string
@@ -29,7 +29,10 @@ export interface GroupedUsers {
   admins: UserSummary[]
   sales: UserSummary[]
   distributors: UserSummary[]
+  supervisors: UserSummary[]
 }
+
+
 
 export async function addUser(session: Session, input: AddUserInput): Promise<AddUserResult> {
   const res = await authFetch('/admin/signup', session, {
@@ -46,5 +49,6 @@ export async function getUsers(session: Session): Promise<GroupedUsers> {
     admins: data.admins ?? [],
     sales: data.sales ?? [],
     distributors: data.distributors ?? [],
+    supervisors: data.supervisors ?? [],
   }
 }

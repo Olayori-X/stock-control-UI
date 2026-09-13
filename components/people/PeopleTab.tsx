@@ -15,7 +15,7 @@ export function PeopleTab({ session }: { session: Session }) {
   const [formError, setFormError] = useState<string | null>(null)
   const [formSuccess, setFormSuccess] = useState<string | null>(null)
 
-  const [users, setUsers] = useState<GroupedUsers>({ admins: [], sales: [], distributors: [] })
+  const [users, setUsers] = useState<GroupedUsers>({ admins: [], sales: [], distributors: [], supervisors: [] })
   const [loadingUsers, setLoadingUsers] = useState(false)
   const [usersError, setUsersError] = useState<string | null>(null)
 

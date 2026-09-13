@@ -7,7 +7,7 @@ import { addProduct, deleteProduct, editProduct, getProducts, type Product } fro
 import { AddProductModal } from './AddProductModal'
 import { EditProductModal } from './EditProductModal'
 
-export function InventoryTab({ session, role }: { session: Session; role: 'admin' | 'sales' | 'distributor' }) {
+export function InventoryTab({ session, role }: { session: Session; role: 'admin' | 'sales' | 'distributor' | 'supervisor' }) {
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)

@@ -1,9 +1,10 @@
-export type Role = 'sales' | 'distributor' | 'admin'
+export type Role = 'sales' | 'distributor' | 'admin' | 'supervisor'
 
 export const roles: Record<Role, { label: string; shortLabel: string }> = {
   sales: { label: 'Sales Associate', shortLabel: 'Sales' },
   distributor: { label: 'Distributor', shortLabel: 'Distributor' },
   admin: { label: 'Administrator', shortLabel: 'Admin' },
+  supervisor: { label: 'Supervisor', shortLabel: 'Supervisor' },
 }
 
 export const navigation = [

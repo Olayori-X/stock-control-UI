@@ -38,7 +38,8 @@ export interface EditOutletInput extends OutletInput {
 }
 
 export async function getOutlets(session: Session, includeInactive = false): Promise<Outlet[]> {
-  const path = `/admin/outlets${includeInactive ? '?include_inactive=true' : ''}`
+  const base = session.role === 'supervisor' ? '/supervisor/outlets' : '/admin/outlets'
+  const path = `${base}${includeInactive ? '?include_inactive=true' : ''}`
   const res = await authFetch(path, session)
   return unwrap<Outlet[]>(res)
 }

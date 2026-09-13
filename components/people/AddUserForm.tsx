@@ -7,6 +7,7 @@ const roleOptions: { value: Role; label: string }[] = [
   { value: 'admin', label: 'Admin' },
   { value: 'sales', label: 'Sales associate' },
   { value: 'distributor', label: 'Distributor' },
+  { value: 'supervisor', label: 'Supervisor' },
 ]
 
 export function AddUserForm({

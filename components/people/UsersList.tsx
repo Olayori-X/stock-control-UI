@@ -24,6 +24,7 @@ export function UsersList({
             ['Admins', users.admins],
             ['Sales associates', users.sales],
             ['Distributors', users.distributors],
+            ['Supervisors', users.supervisors],
           ] as const).map(([label, list]) => (
             <div key={label} style={{ marginBottom: 20 }}>
               <h3 style={{ margin: '12px 0 8px' }}>{label} ({list.length})</h3>

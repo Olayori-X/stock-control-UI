@@ -5,24 +5,25 @@ import { AlertTriangle, KeyRound, RefreshCw } from 'lucide-react'
 import type { Session } from '@/lib/auth'
 import { setPIN, type UserSummary } from '@/lib/api'
 import { AssociatePicker } from '@/components/shared/AssociatePicker'
+import { ConfirmDialog } from '@/components/shared/ConfirmDialog'
 import { PinResultCard } from './PinResultCard'
 
 export function PinManagementTab({ session }: { session: Session }) {
   const [associateId, setAssociateId] = useState('')
+  const [pendingName, setPendingName] = useState('')
+  const [showConfirm, setShowConfirm] = useState(false)
+
   const [generating, setGenerating] = useState(false)
   const [error, setError] = useState<string | null>(null)
-
   const [result, setResult] = useState<{ associateName: string; pin: string } | null>(null)
 
   async function handleGenerate() {
+    setShowConfirm(false)
     if (!associateId) return
     setGenerating(true)
     setError(null)
     try {
       const res = await setPIN(session, associateId)
-      // We don't have the associate's name from setPIN's response (it only
-      // returns user_id + pin), so AssociatePicker's own resolved selection
-      // supplies it — see the associateName prop passed down below.
       setResult({ associateName: pendingName, pin: res.pin })
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to generate PIN')
@@ -30,11 +31,6 @@ export function PinManagementTab({ session }: { session: Session }) {
       setGenerating(false)
     }
   }
-
-  // AssociatePicker only exposes the selected ID upward, not the resolved
-  // record — track the name locally via onSelectDetails so the result card
-  // can show a human name instead of a raw ID.
-  const [pendingName, setPendingName] = useState('')
 
   return (
     <div className="content">
@@ -62,11 +58,22 @@ export function PinManagementTab({ session }: { session: Session }) {
         )}
 
         <div className="modal-actions" style={{ justifyContent: 'flex-start', marginTop: 20 }}>
-          <button className="primary-button" onClick={handleGenerate} disabled={!associateId || generating}>
+          <button className="primary-button" onClick={() => setShowConfirm(true)} disabled={!associateId || generating}>
             <RefreshCw size={16} /> {generating ? 'Generating…' : 'Generate new PIN'}
           </button>
         </div>
       </section>
+
+      {showConfirm && (
+        <ConfirmDialog
+          title={`Reset PIN for ${pendingName || 'this associate'}?`}
+          message="This immediately invalidates their current PIN, if one exists. They won't be able to log in with the old PIN once this completes."
+          confirmLabel="Generate new PIN"
+          destructive
+          onConfirm={handleGenerate}
+          onCancel={() => setShowConfirm(false)}
+        />
+      )}
 
       {result && (
         <PinResultCard
