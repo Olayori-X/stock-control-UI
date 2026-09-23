@@ -177,7 +177,12 @@ export function RoutePlannerTab({ session }: { session: Session }) {
                 </div>
 
                 <div style={{ marginTop: 16 }}>
-                  <OutletPicker session={session} excludeIds={stops.map((s) => s.outlet_id)} onAdd={addStop} />
+                  <OutletPicker
+                    session={session}
+                    excludeIds={stops.map((s) => s.outlet_id)}
+                    defaultOwnerId={associateId}  // NEW — prefilters to outlets this associate owns
+                    onAdd={addStop}
+                  />
                 </div>
 
                 {saveError && (

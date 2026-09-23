@@ -7,10 +7,12 @@ import { getOutlets, type Outlet } from '@/lib/api'
 export function OutletPicker({
   session,
   excludeIds,
+  defaultOwnerId,
   onAdd,
 }: {
   session: Session
   excludeIds: string[] // outlets already in the route — hidden from results
+  defaultOwnerId: string
   onAdd: (outlet: Outlet) => void
 }) {
   const [outlets, setOutlets] = useState<Outlet[]>([])
@@ -21,7 +23,7 @@ export function OutletPicker({
   useEffect(() => {
     let cancelled = false
     setLoading(true)
-    getOutlets(session)
+    getOutlets(session, false, defaultOwnerId)
       .then((result) => { if (!cancelled) setOutlets(result ?? []) })
       .catch((err) => { if (!cancelled) setError(err instanceof Error ? err.message : 'Failed to load outlets') })
       .finally(() => { if (!cancelled) setLoading(false) })
