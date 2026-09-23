@@ -11,8 +11,8 @@ export function OutletPicker({
   onAdd,
 }: {
   session: Session
-  excludeIds: string[] // outlets already in the route — hidden from results
-  defaultOwnerId: string
+  excludeIds: string[]
+  defaultOwnerId?: string
   onAdd: (outlet: Outlet) => void
 }) {
   const [outlets, setOutlets] = useState<Outlet[]>([])
@@ -23,47 +23,43 @@ export function OutletPicker({
   useEffect(() => {
     let cancelled = false
     setLoading(true)
-    getOutlets(session, false, defaultOwnerId)
+    getOutlets(session, false, defaultOwnerId || '')
       .then((result) => { if (!cancelled) setOutlets(result ?? []) })
       .catch((err) => { if (!cancelled) setError(err instanceof Error ? err.message : 'Failed to load outlets') })
       .finally(() => { if (!cancelled) setLoading(false) })
     return () => { cancelled = true }
-  }, [session])
+  }, [session, defaultOwnerId])
 
   if (loading) return <p className="muted-cell">Loading outlets…</p>
   if (error) return <p className="muted-cell">{error}</p>
 
-  const results = query.trim().length === 0
-    ? []
-    : outlets.filter(
-        (o) => !excludeIds.includes(o.outlet_id) &&
-          (o.name.toLowerCase().includes(query.toLowerCase()) || o.area.toLowerCase().includes(query.toLowerCase()))
-      )
+  const visible = outlets
+    .filter((o) => !excludeIds.includes(o.outlet_id))
+    .filter((o) => query.trim() === '' || o.name.toLowerCase().includes(query.toLowerCase()) || o.area.toLowerCase().includes(query.toLowerCase()))
 
   return (
-    <div style={{ position: 'relative' }}>
+    <div>
       <input
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="Search outlets to add..."
+        placeholder="Filter outlets..."
         autoComplete="off"
       />
-      {query.trim().length > 0 && results.length > 0 && (
-        <div className="table-wrap" style={{ marginTop: 6 }}>
+      <div className="table-wrap" style={{ marginTop: 8 }}>
+        {visible.length === 0 ? (
+          <p className="muted-cell">{outlets.length === 0 ? 'No outlets assigned to this associate.' : 'No matches.'}</p>
+        ) : (
           <table>
             <tbody>
-              {results.map((o) => (
-                <tr key={o.outlet_id} onClick={() => { onAdd(o); setQuery('') }} style={{ cursor: 'pointer' }}>
+              {visible.map((o) => (
+                <tr key={o.outlet_id} onClick={() => onAdd(o)} style={{ cursor: 'pointer' }}>
                   <td><strong>{o.name}</strong><span>{o.area || 'No area set'}</span></td>
                 </tr>
               ))}
             </tbody>
           </table>
-        </div>
-      )}
-      {query.trim().length > 0 && results.length === 0 && (
-        <p className="muted-cell">No matching outlets.</p>
-      )}
+        )}
+      </div>
     </div>
   )
 }

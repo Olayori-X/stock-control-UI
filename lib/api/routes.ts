@@ -42,3 +42,9 @@ export async function approveRoutePlan(session: Session, salesAssociateId: strin
   })
   await unwrap(res)
 }
+
+export async function deleteRoutePlan(session: Session, salesAssociateId: string, routeDay: string): Promise<void> {
+  const params = new URLSearchParams({ sales_associate_id: salesAssociateId, route_day: routeDay })
+  const res = await authFetch(`/admin/routeplan?${params}`, session, { method: 'DELETE' })
+  await unwrap(res)
+}

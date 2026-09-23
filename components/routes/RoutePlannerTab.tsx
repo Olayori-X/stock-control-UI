@@ -3,11 +3,12 @@
 import { useEffect, useState } from 'react'
 import { AlertTriangle, Check, MapPin, ShieldCheck } from 'lucide-react'
 import type { Session } from '@/lib/auth'
-import { approveRoutePlan, getRoutePlan, setRoutePlan, type Outlet, type RoutePlan, type RoutePlanStop } from '@/lib/api'
+import { approveRoutePlan, deleteRoutePlan, getRoutePlan, setRoutePlan, type Outlet, type RoutePlan, type RoutePlanStop } from '@/lib/api'
 import { ROUTE_DAYS } from '@/lib/constants'
 import { AssociatePicker } from '@/components/shared/AssociatePicker'
 import { OutletPicker } from './OutletPicker'
 import { RouteStopsList } from './RouteStopsList'
+import { ConfirmDialog } from '../shared/ConfirmDialog'
 
 function toStop(outlet: Outlet, sequence: number): RoutePlanStop {
   return {
@@ -34,6 +35,9 @@ export function RoutePlannerTab({ session }: { session: Session }) {
   const [saveSuccess, setSaveSuccess] = useState<string | null>(null)
 
   const [approving, setApproving] = useState(false)
+
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [deleting, setDeleting] = useState(false)
 
   useEffect(() => {
     if (!associateId || !routeDay) {
@@ -123,6 +127,21 @@ export function RoutePlannerTab({ session }: { session: Session }) {
     }
   }
 
+  async function handleDelete() {
+    setShowDeleteConfirm(false)
+    setDeleting(true)
+    try {
+      await deleteRoutePlan(session, associateId, routeDay)
+      setStops([])
+      setPlan(null)
+      setSaveSuccess('Route plan deleted.')
+    } catch (err) {
+      setSaveError(err instanceof Error ? err.message : 'Failed to delete route plan')
+    } finally {
+      setDeleting(false)
+    }
+  }
+
   return (
     <div className="content">
       <div className="page-heading">
@@ -200,6 +219,21 @@ export function RoutePlannerTab({ session }: { session: Session }) {
                     {saving ? 'Saving…' : 'Save route'}
                   </button>
                 </div>
+
+                <button className="secondary-button" onClick={() => setShowDeleteConfirm(true)} disabled={deleting || stops.length === 0}>
+                  {deleting ? 'Deleting…' : 'Delete route'}
+                </button>
+
+                {showDeleteConfirm && (
+                  <ConfirmDialog
+                    title="Delete this route plan?"
+                    message="This removes every stop for this associate/day, approved or not."
+                    confirmLabel="Delete"
+                    destructive
+                    onConfirm={handleDelete}
+                    onCancel={() => setShowDeleteConfirm(false)}
+                  />
+                )}
               </section>
             </>
           )}
