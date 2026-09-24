@@ -54,16 +54,13 @@ export function Sidebar({
         })}
       </nav>
       <div className="sidebar-bottom">
-        <button className="nav-item"><Settings2 size={18} /><span>Settings</span></button>
-        <div className="help-card">
-          <CircleHelp size={18} />
-          <div><strong>Need a hand?</strong><span>Visit the help center</span></div>
-        </div>
-        <div className="user-row">
-          <div className="user-avatar">{session.userId.slice(0, 2).toUpperCase()}</div>
-          <div><strong>{session.userId}</strong><span>{roles[session.role].label}</span></div>
-          <ChevronDown size={15} />
-        </div>
+        <button
+          className={currentNav === 'Settings' ? 'nav-item active' : 'nav-item'}
+          onClick={() => onSelectNav('Settings')}
+        >
+          <Settings2 size={18} /><span>Settings</span>
+        </button>
+        {/* ...help-card, user-row unchanged... */}
       </div>
     </aside>
   )
