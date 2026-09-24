@@ -31,7 +31,7 @@ export function Sidebar({
     <aside className={`sidebar ${mobileOpen ? 'sidebar-open' : ''}`}>
       <div className="brand">
         <div className="brand-mark"><Boxes size={20} /></div>
-        <span>Stockwise</span>
+        <span>RouteIQ</span>
         <button className="icon-button mobile-close" onClick={onClose} aria-label="Close menu"><X size={18} /></button>
       </div>
       <div className="workspace">

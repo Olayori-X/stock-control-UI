@@ -40,7 +40,7 @@ export default function LoginPage() {
       <section className="auth-card">
         <div className="auth-brand">
           <div className="brand-mark"><Boxes size={20} /></div>
-          <span>Stockwise</span>
+          <span>RouteIQ</span>
         </div>
         <h1>Sign in</h1>
         <p>Use your work email and password to access your workspace.</p>

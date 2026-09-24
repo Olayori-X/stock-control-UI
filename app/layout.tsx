@@ -3,9 +3,9 @@ import type { Metadata, Viewport } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Stockwise | Operations workspace',
+  title: 'RouteIQ | Operations workspace',
   description: 'A focused stock control workspace for sales associates, distributors, and administrators.',
-  generator: 'Stockwise',
+  generator: 'RouteIQ',
   icons: {
     icon: [
       {

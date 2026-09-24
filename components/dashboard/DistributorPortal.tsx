@@ -35,7 +35,7 @@ export function DistributorPortal({
     <main className="app-shell">
       <section className="main-panel" style={{ marginLeft: 0, width: '100%' }}>
         <header className="topbar">
-          <div className="breadcrumb"><Boxes size={18} /><span>Stockwise</span><span>/</span><strong>Pickup requests</strong></div>
+          <div className="breadcrumb"><Boxes size={18} /><span>RouteIQ</span><span>/</span><strong>Pickup requests</strong></div>
           <div className="top-actions">
             <button className="icon-button" onClick={onLogout} aria-label="Log out" title="Log out"><LogOut size={17} /></button>
           </div>
