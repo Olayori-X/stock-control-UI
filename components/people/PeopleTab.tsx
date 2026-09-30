@@ -6,6 +6,7 @@ import type { Session } from '@/lib/auth'
 import { addUser, getUsers, type AddUserInput, type GroupedUsers } from '@/lib/api'
 import { AddUserForm } from './AddUserForm'
 import { UsersList } from './UsersList'
+import type { UserSummary } from '@/lib/api'
 
 const emptyForm: AddUserInput = { name: '', email: '', phone: '', password: '', role: 'sales' }
 
@@ -33,6 +34,18 @@ export function PeopleTab({ session }: { session: Session }) {
     } finally {
       setLoadingUsers(false)
     }
+  }
+
+  function handleUserUpdated(updated: UserSummary) {
+    setUsers((prev) => {
+      const replace = (list: UserSummary[]) => list.map((u) => (u.user_id === updated.user_id ? updated : u))
+      return {
+        admins: replace(prev.admins),
+        sales: replace(prev.sales),
+        distributors: replace(prev.distributors),
+        supervisors: replace(prev.supervisors),
+      }
+    })
   }
 
   function updateForm<K extends keyof AddUserInput>(key: K, value: AddUserInput[K]) {
@@ -66,7 +79,7 @@ export function PeopleTab({ session }: { session: Session }) {
         </div>
       </div>
       <AddUserForm form={form} submitting={submitting} error={formError} success={formSuccess} onChange={updateForm} onSubmit={handleSubmit} />
-      <UsersList loading={loadingUsers} error={usersError} users={users} />
+      <UsersList session={session} loading={loadingUsers} error={usersError} users={users} onUserUpdated={handleUserUpdated} />
     </div>
   )
 }

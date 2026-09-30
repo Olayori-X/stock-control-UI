@@ -22,7 +22,15 @@ export interface UserSummary {
   phone: string
   role: Role
   verified: boolean
+  active: boolean
   created_at: string
+}
+
+export interface EditUserInput {
+  user_id: string
+  name: string
+  email: string
+  phone: string
 }
 
 export interface GroupedUsers {
@@ -51,4 +59,21 @@ export async function getUsers(session: Session): Promise<GroupedUsers> {
     distributors: data.distributors ?? [],
     supervisors: data.supervisors ?? [],
   }
+}
+
+export async function editUser(session: Session, input: EditUserInput): Promise<UserSummary> {
+  const res = await authFetch('/admin/edituser', session, {
+    method: 'PUT',
+    body: JSON.stringify(input),
+  })
+  return unwrap<UserSummary>(res)
+}
+
+export async function setUserActive(session: Session, userId: string, active: boolean): Promise<void> {
+  const res = await authFetch(
+    `/admin/deactivateuser?user_id=${encodeURIComponent(userId)}&active=${active}`,
+    session,
+    { method: 'DELETE' }
+  )
+  await unwrap(res)
 }
