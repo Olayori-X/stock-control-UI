@@ -144,7 +144,7 @@ export default function Page() {
 
         {currentNav === 'Assignments' && role === 'admin' && <AssignmentsTab session={session} />}
 
-        {currentNav === 'Outlets' && (role === 'admin' || role === 'supervisor') && <OutletsTab session={session} role={role} />}
+        {/* {currentNav === 'Outlets' && (role === 'admin' || role === 'supervisor') && <OutletsTab session={session} role={role} />} */}
 
         {currentNav === 'Reports' && (role === 'admin' || role === 'supervisor') && <ReportsTab session={session} />}
 
