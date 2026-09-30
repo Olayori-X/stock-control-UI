@@ -55,7 +55,7 @@ export async function confirmPickupRequest(session: Session, requestId: string):
 }
 
 export async function searchDistributors(session: Session, query: string): Promise<DistributorSearchResult[]> {
-  const res = await authFetch(`/sales/searchdistributor?query=${encodeURIComponent(query)}`, session)
+  const res = await authFetch(`/admin/searchdistributor?query=${encodeURIComponent(query)}`, session)
   const data = await unwrap<{ users: DistributorSearchResult[]; total: number }>(res)
   return data.users ?? []
 }
@@ -70,4 +70,10 @@ export async function createPickupRequest(session: Session, input: CreatePickupR
     }),
   })
   return unwrap<PickupRequest>(res)
+}
+
+export async function adminSearchDistributors(session: Session, query: string): Promise<DistributorSearchResult[]> {
+  const res = await authFetch(`/admin/searchdistributor?query=${encodeURIComponent(query)}`, session)
+  const data = await unwrap<{ users: DistributorSearchResult[]; total: number }>(res)
+  return data.users ?? []
 }
